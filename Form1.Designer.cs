@@ -31,7 +31,9 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadDXFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveXModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wiringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wireFromSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,8 +48,6 @@
             this.XGrid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.YGrid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nodesDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listDataGridView)).BeginInit();
@@ -83,21 +83,31 @@
             // loadDXFToolStripMenuItem
             // 
             this.loadDXFToolStripMenuItem.Name = "loadDXFToolStripMenuItem";
-            this.loadDXFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadDXFToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.loadDXFToolStripMenuItem.Text = "Load DXF...";
             this.loadDXFToolStripMenuItem.Click += new System.EventHandler(this.loadDXFToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(137, 6);
             // 
             // saveXModelToolStripMenuItem
             // 
             this.saveXModelToolStripMenuItem.Name = "saveXModelToolStripMenuItem";
-            this.saveXModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveXModelToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.saveXModelToolStripMenuItem.Text = "Save xModel";
             this.saveXModelToolStripMenuItem.Click += new System.EventHandler(this.saveXModelToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(137, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -108,14 +118,15 @@
             this.leftToRightToolStripMenuItem,
             this.upAndDownToolStripMenuItem});
             this.wiringToolStripMenuItem.Name = "wiringToolStripMenuItem";
-            this.wiringToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
-            this.wiringToolStripMenuItem.Text = "Wiring";
+            this.wiringToolStripMenuItem.Size = new System.Drawing.Size(72, 20);
+            this.wiringToolStripMenuItem.Text = "Auto Wire";
             // 
             // wireFromSelectedToolStripMenuItem
             // 
             this.wireFromSelectedToolStripMenuItem.Name = "wireFromSelectedToolStripMenuItem";
             this.wireFromSelectedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.wireFromSelectedToolStripMenuItem.Text = "Wire From Selected";
+            this.wireFromSelectedToolStripMenuItem.Text = "Selected to Closest";
+            this.wireFromSelectedToolStripMenuItem.ToolTipText = "Start at Selected then to Next Closest";
             this.wireFromSelectedToolStripMenuItem.Click += new System.EventHandler(this.wireFromSelectedToolStripMenuItem_Click);
             // 
             // leftToRightToolStripMenuItem
@@ -123,6 +134,7 @@
             this.leftToRightToolStripMenuItem.Name = "leftToRightToolStripMenuItem";
             this.leftToRightToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.leftToRightToolStripMenuItem.Text = "Left to Right";
+            this.leftToRightToolStripMenuItem.ToolTipText = "Wire Left To Right on the Whole Grid";
             this.leftToRightToolStripMenuItem.Click += new System.EventHandler(this.leftToRightToolStripMenuItem_Click);
             // 
             // upAndDownToolStripMenuItem
@@ -130,6 +142,8 @@
             this.upAndDownToolStripMenuItem.Name = "upAndDownToolStripMenuItem";
             this.upAndDownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.upAndDownToolStripMenuItem.Text = "Up and Down";
+            this.upAndDownToolStripMenuItem.ToolTipText = "Wire Up To Down on the Whole Grid";
+            this.upAndDownToolStripMenuItem.Click += new System.EventHandler(this.upAndDownToolStripMenuItem_Click);
             // 
             // dxfOpenFileDialog
             // 
@@ -251,16 +265,6 @@
             this.splitContainer1.SplitterDistance = 196;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 4;
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // Form1
             // 

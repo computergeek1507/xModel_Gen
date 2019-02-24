@@ -19,6 +19,11 @@ namespace xModel_Gen
             listDataGridView.DataSource = null;
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
         private void loadDXFToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (dxfOpenFileDialog.ShowDialog() == DialogResult.OK)
@@ -38,8 +43,64 @@ namespace xModel_Gen
                 }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void wireFromSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            AutoWire();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void upAndDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WireUpandDowm();
+        }
+
+        private void leftToRightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WireLeftToRight();
+        }
+
+        private void saveXModelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GenerateCustomModel();
+        }
+
+        private void listDataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex > _model.GetNodeCount() - 1)
+                return;
+            if (e.RowIndex < 0)
+                return;
+            var text = listDataGridView.Columns[e.ColumnIndex].Name;
+            if (text == "Node")
+            {
+                var newNode = listDataGridView.Rows[e.RowIndex]
+                    .Cells["Node"].Value.ToString();
+                var worked = int.TryParse(newNode, out var node);
+                if (worked)
+                    _model.SetNodeNumber(e.RowIndex, node);
+            }
+
+            listDataGridView.Refresh();
+
+            DrawGrid();
+        }
+
+        private void listDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex > _model.GetNodeCount() - 1)
+                return;
+            if (e.RowIndex < 0)
+                return;
+
+            var x = _model.GetNode(e.RowIndex).GridX;
+            var y = _model.GetNode(e.RowIndex).GridY;
+
+            nodesDataGridView.ClearSelection();
+            nodesDataGridView.Rows[y].Cells[x].Selected = true;
         }
 
         private void DrawDxf(DxfDocument file)
@@ -64,8 +125,8 @@ namespace xModel_Gen
                 //pixel hole are about 0.5 inches or 0.25
                 if (0.2 > entity.Radius || entity.Radius > 0.3) continue;
 
-                var newX = (int) (entity.Center.X * 2.0);
-                var newY = (int) (entity.Center.Y * 2.0);
+                var newX = (int)(entity.Center.X * 2.0);
+                var newY = (int)(entity.Center.Y * 2.0);
 
                 if (newX < minX)
                     minX = newX - 1;
@@ -122,24 +183,6 @@ namespace xModel_Gen
             }
         }
 
-        private void listDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex > _model.GetNodeCount() - 1)
-                return;
-            if (e.RowIndex < 0)
-                return;
-
-            var x = _model.GetNode(e.RowIndex).GridX;
-            var y = _model.GetNode(e.RowIndex).GridY;
-
-            nodesDataGridView.ClearSelection();
-            nodesDataGridView.Rows[y].Cells[x].Selected = true;
-        }
-
-        private void leftToRightToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
         private async void GenerateCustomModel()
         {
             xModelSaveFileDialog.FileName = _model.Name;
@@ -192,37 +235,6 @@ namespace xModel_Gen
                     f.Close();
                 }
             }
-        }
-
-        private void saveXModelToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            GenerateCustomModel();
-        }
-
-        private void listDataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex > _model.GetNodeCount() - 1)
-                return;
-            if (e.RowIndex < 0)
-                return;
-            var text = listDataGridView.Columns[e.ColumnIndex].Name;
-            if (text == "Node")
-            {
-                var newNode = listDataGridView.Rows[e.RowIndex]
-                    .Cells["Node"].Value.ToString();
-                var worked = int.TryParse(newNode, out var node);
-                if (worked)
-                    _model.SetNodeNumber(e.RowIndex, node);
-            }
-
-            listDataGridView.Refresh();
-
-            DrawGrid();
-        }
-
-        private void wireFromSelectedToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AutoWire();
         }
 
         private async void AutoWire()
@@ -288,14 +300,57 @@ namespace xModel_Gen
             DrawGrid();
         }
 
+        private async void WireUpandDowm()
+        {
+            //clear old wiring
+            _model.ClearWiring();
+            int nodeNum = 1;
+            for (int x = 0; x < nodesDataGridView.ColumnCount; x++ )
+            {
+                for (int y = 0; y < nodesDataGridView.RowCount; y++)
+                {
+                    var found = _model.FindNode(x, y);
+
+                    if (found != null)
+                    {
+                        found.NodeNumber = nodeNum;
+                        nodeNum++;
+                    }
+                }
+            }
+
+            _model.SortNodes();
+            listDataGridView.Refresh();
+            DrawGrid();
+        }
+
+        private async void WireLeftToRight()
+        {
+            //clear old wiring
+            _model.ClearWiring();
+            int nodeNum = 1;
+            for (int y = 0; y < nodesDataGridView.RowCount; y++)
+            {
+                for (int x = 0; x < nodesDataGridView.ColumnCount; x++)
+                {
+                    var found = _model.FindNode(x, y);
+
+                    if (found != null)
+                    {
+                        found.NodeNumber = nodeNum;
+                        nodeNum++;
+                    }
+                }
+            }
+
+            _model.SortNodes();
+            listDataGridView.Refresh();
+            DrawGrid();
+        }
+
         private static int GetDistance(double x1, double y1, double x2, double y2)
         {
             return (int) Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
         }
     }
 }
