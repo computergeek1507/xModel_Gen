@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using netDxf;
+using netDxf.Entities;
 
 namespace xModel_Gen
 {
@@ -29,6 +31,7 @@ namespace xModel_Gen
             if (dxfOpenFileDialog.ShowDialog() == DialogResult.OK)
                 try
                 {
+                    _model.GetNodes().Clear();
                     //Get the path of specified file
                     _doc = DxfDocument.Load(dxfOpenFileDialog.FileName);
 
@@ -39,7 +42,6 @@ namespace xModel_Gen
                 catch (Exception exception)
                 {
                     Console.WriteLine(exception);
-                    throw;
                 }
         }
 
@@ -111,10 +113,60 @@ namespace xModel_Gen
             var maxX = 0;
             var maxY = 0;
 
-            //foreach (Line entity in _doc.Lines)
-            //{
+            foreach (LwPolyline entity in _doc.LwPolylines)
+            {
+                if(!entity.IsClosed)
+                    continue;
+                int count = entity.Vertexes.Count;
+                if (count == 10)
+                {
+                    double minNodeX = 10000000.0;
+                    double minNodeY = 10000000.0;
+                    double maxNodeX = 0.0;
+                    double maxNodeY = 0.0;
 
-            //}
+                    foreach (LwPolylineVertex pt in entity.Vertexes)
+                    {
+                        if (pt.Position.X < minNodeX)
+                            minNodeX = pt.Position.X;
+                        if (pt.Position.Y < minNodeY)
+                            minNodeY = pt.Position.Y;
+
+                        if (pt.Position.X > maxNodeX)
+                            maxNodeX = pt.Position.X;
+                        if (pt.Position.Y > maxNodeY)
+                            maxNodeY = pt.Position.Y;
+                    }
+
+                    double dist = maxNodeX - minNodeX;
+                    if (0.4 > dist || dist > 0.7) continue;
+
+                    double centerX = (maxNodeX + minNodeX) / 2.0;
+                    double centerY = (maxNodeY + minNodeY) / 2.0;
+
+                    int t = count;
+
+                    var newX = (int)(centerX * 2.0);
+                    var newY = (int)(centerY * 2.0);
+
+                    if (newX < minX)
+                        minX = newX - 1;
+                    if (newY < minY)
+                        minY = newY - 1;
+
+                    if (newX > maxX)
+                        maxX = newX + 1;
+                    if (newY > maxY)
+                        maxY = newY + 1;
+
+                    var newNode = new Node
+                    {
+                        GridX = newX,
+                        GridY = newY
+                    };
+                    _model.AddNode(newNode);
+                }
+            }
 
             foreach (var entity in _doc.Arcs)
             {
@@ -154,8 +206,12 @@ namespace xModel_Gen
 
             foreach (var node in _model.GetNodes())
             {
-                var scaleX = _model.SizeX / 2 + node.GridX;
-                var scaleY = _model.SizeY / 2 + node.GridY;
+                //var scaleX = _model.SizeX / 2 + node.GridX;
+                //var scaleY = _model.SizeY / 2 + node.GridY;
+                var scaleX =  node.GridX - minX;
+                var scaleY =  node.GridY - minY;
+                Debug.WriteLine(scaleX);
+                Debug.WriteLine(scaleY);
                 node.GridX = scaleX;
                 node.GridY = scaleY;
             }
@@ -166,24 +222,26 @@ namespace xModel_Gen
 
         private void DrawGrid()
         {
-            while (nodesDataGridView.ColumnCount < _model.SizeX)
+            while (nodesDataGridView.ColumnCount <= _model.SizeX)
             {
                 nodesDataGridView.Columns.Add("", "");
                 nodesDataGridView.Columns[nodesDataGridView.ColumnCount - 1].Width = 20;
             }
 
-            while (nodesDataGridView.RowCount < _model.SizeY) nodesDataGridView.Rows.Add();
+            while (nodesDataGridView.RowCount <= _model.SizeY) nodesDataGridView.Rows.Add();
 
             foreach (var node in _model.GetNodes())
             {
                 var value = "X";
                 if (node.IsWired)
                     value = node.NodeNumber.ToString();
+                Debug.WriteLine(node.GridX);
+                Debug.WriteLine(node.GridY);
                 nodesDataGridView[node.GridX, node.GridY].Value = value;
             }
         }
 
-        private async void GenerateCustomModel()
+        private void GenerateCustomModel()
         {
             xModelSaveFileDialog.FileName = _model.Name;
             if (xModelSaveFileDialog.ShowDialog() == DialogResult.OK)
@@ -237,7 +295,7 @@ namespace xModel_Gen
             }
         }
 
-        private async void AutoWire()
+        private void AutoWire()
         {
             //clear old wiring
             _model.ClearWiring();
@@ -300,7 +358,7 @@ namespace xModel_Gen
             DrawGrid();
         }
 
-        private async void WireUpandDowm()
+        private void WireUpandDowm()
         {
             //clear old wiring
             _model.ClearWiring();
@@ -324,7 +382,7 @@ namespace xModel_Gen
             DrawGrid();
         }
 
-        private async void WireLeftToRight()
+        private void WireLeftToRight()
         {
             //clear old wiring
             _model.ClearWiring();
