@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using netDxf;
+using netDxf.Collections;
 using netDxf.Entities;
 
 namespace xModel_Gen
@@ -10,6 +12,8 @@ namespace xModel_Gen
     public partial class Form1 : Form
     {
         private DxfDocument _doc;
+
+        private ProgressDialog _progess;
 
         private readonly Model _model = new Model();
 
@@ -35,6 +39,12 @@ namespace xModel_Gen
                     //Get the path of specified file
                     _doc = DxfDocument.Load(dxfOpenFileDialog.FileName);
 
+                    if (_doc == null)
+                    {
+                        MessageBox.Show("Failed to Load DXF File", "Error");
+                        return;
+                    }
+
                     var fileName = new FileInfo(dxfOpenFileDialog.FileName);
                     Text = "xModel Gen \"" + fileName.Name + "\"";
                     DrawDxf(_doc);
@@ -42,6 +52,28 @@ namespace xModel_Gen
                 catch (Exception exception)
                 {
                     Console.WriteLine(exception);
+                    MessageBox.Show(exception.Message, "Error");
+                }
+        }
+
+        private void LoadMattDXFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dxfOpenFileDialog.ShowDialog() == DialogResult.OK)
+                try
+                {
+                    _model.GetNodes().Clear();
+                    //Get the path of specified file
+
+                    var fileName = new FileInfo(dxfOpenFileDialog.FileName);
+                    Text = "xModel Gen \"" + fileName.Name + "\"";
+
+                    ReadMattJohnsonFile(dxfOpenFileDialog.FileName, Path.GetFileNameWithoutExtension(fileName.Name));
+
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                    MessageBox.Show(exception.Message, "Error");
                 }
         }
 
@@ -103,6 +135,38 @@ namespace xModel_Gen
 
             nodesDataGridView.ClearSelection();
             nodesDataGridView.Rows[y].Cells[x].Selected = true;
+        }
+
+        private void NodesDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var x = nodesDataGridView.CurrentCell.ColumnIndex;
+            var y = nodesDataGridView.CurrentCell.RowIndex;
+            if (Control.ModifierKeys == Keys.Shift)
+            {
+                _model.DeleteNode(x, y);
+                nodesDataGridView[x, y].Value = string.Empty;
+            }
+            else
+            {
+                if (checkBoxActive.Checked)
+                {
+                    _model.SetNodeNumber(x, y, decimal.ToInt32(numericUpDownChannel.Value));
+                    DrawGrid();
+                    if (checkBoxIncrement.Checked)
+                    {
+                        numericUpDownChannel.Value = numericUpDownChannel.Value + 1;
+                    }
+                }
+            }
+        }
+
+        private void NodesDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var x = nodesDataGridView.CurrentCell.ColumnIndex;
+            var y = nodesDataGridView.CurrentCell.RowIndex;
+
+            _model.DeleteNode(x, y);
+            nodesDataGridView[x, y].Value = string.Empty;
         }
 
         private void DrawDxf(DxfDocument file)
@@ -220,6 +284,82 @@ namespace xModel_Gen
             DrawGrid();
         }
 
+        private void ReadMattJohnsonFile(string filesPath, string fname)
+        {
+            _model.Name = fname;
+            var minX = 10000000;
+            var minY = 10000000;
+            var maxX = 0;
+            var maxY = 0;
+
+            string line;
+
+            // Read the file and display it line by line.  
+            StreamReader file = new StreamReader(filesPath);
+            while ((line = file.ReadLine()) != null)
+            {
+                //System.Console.WriteLine(line);
+                if (line.StartsWith("AcDbBlockReference"))
+                {
+                    file.ReadLine();
+                    string name = file.ReadLine();
+                    if (!name.StartsWith("*U"))
+                    {
+                        continue;
+                    }
+                    file.ReadLine();
+                    string strX = file.ReadLine();
+                    file.ReadLine();
+                    string strY = file.ReadLine();
+                    double centX = double.Parse(strX);
+                    double centY = double.Parse(strY);
+
+                    var newX = (int)(centX);
+                    var newY = (int)(centY);
+
+                    if (newX < minX)
+                        minX = newX - 1;
+                    if (newY < minY)
+                        minY = newY - 1;
+
+                    if (newX > maxX)
+                        maxX = newX + 1;
+                    if (newY > maxY)
+                        maxY = newY + 1;
+
+                    var newNode = new Node
+                    {
+                        GridX = newX,
+                        GridY = newY
+                    };
+                    _model.AddNode(newNode);
+                }
+            }
+
+            file.Close();
+
+            var width = maxX - minX;
+            var heigth = maxY - minY;
+
+            _model.SizeX = width;
+            _model.SizeY = heigth;
+
+            foreach (var node in _model.GetNodes())
+            {
+                //var scaleX = _model.SizeX / 2 + node.GridX;
+                //var scaleY = _model.SizeY / 2 + node.GridY;
+                var scaleX = node.GridX - minX;
+                var scaleY = node.GridY - minY;
+                Debug.WriteLine(scaleX);
+                Debug.WriteLine(scaleY);
+                node.GridX = scaleX;
+                node.GridY = scaleY;
+            }
+
+            listDataGridView.DataSource = _model.GetBinding();
+            DrawGrid();
+        }
+
         private void DrawGrid()
         {
             while (nodesDataGridView.ColumnCount <= _model.SizeX)
@@ -320,25 +460,25 @@ namespace xModel_Gen
             {
                 i++;
                 var distance = 10000;
-                Node _foundnode = null;
+                Node foundnode = null;
                 foreach (var node in _model.GetNodes())
                 {
                     if (node.IsWired)
                         continue;
-                    var newdist = GetDistance(x, y, node.GridX, node.GridY);
+                    var newdist = ModelUtils.GetDistance(x, y, node.GridX, node.GridY);
                     if (newdist < distance)
                     {
                         distance = newdist;
-                        _foundnode = node;
+                        foundnode = node;
                     }
                 }
 
-                if (_foundnode != null)
+                if (foundnode != null)
                 {
                     num++;
-                    _foundnode.NodeNumber = num;
-                    x = _foundnode.GridX;
-                    y = _foundnode.GridY;
+                    foundnode.NodeNumber = num;
+                    x = foundnode.GridX;
+                    y = foundnode.GridY;
                 }
                 else
                 {
@@ -356,6 +496,52 @@ namespace xModel_Gen
             _model.SortNodes();
             listDataGridView.Refresh();
             DrawGrid();
+        }
+
+        private void BetterAutoWire()
+        {
+            _progess = new ProgressDialog();
+            _progess.Show();
+            AutoSort sort = new AutoSort(_model);
+            sort.ListSizeSent += ProgressSizeUpdated;
+            sort.ProgressSent += ProgressUpdated;
+
+            _model.ClearWiring();
+
+            var x = nodesDataGridView.CurrentCell.ColumnIndex;
+            var y = nodesDataGridView.CurrentCell.RowIndex;
+
+            bool worked = sort.WireModel(x, y);
+
+            _progess.Close();
+
+            _model.SortNodes();
+            listDataGridView.Refresh();
+            DrawGrid();
+            MessageBox.Show(worked ? "Worked!" : "Didn't Work:(");
+        }
+
+        private void ProgressSizeUpdated(object sender, int e)
+        {
+            _progess.ProgressMaximum = e;
+        }
+
+        private void ProgressUpdated(object sender, ProgressEventArgs e)
+        {
+            _progess.Message = e.Message;
+            _progess.ProgressValue = e.Progress;
+            if (e.NodeUpdated != null)
+            {
+                var value = "X";
+                if (e.NodeUpdated.IsWired)
+                    value = e.NodeUpdated.NodeNumber.ToString();
+                Debug.WriteLine(e.NodeUpdated.GridX);
+                Debug.WriteLine(e.NodeUpdated.GridY);
+                nodesDataGridView[e.NodeUpdated.GridX, e.NodeUpdated.GridY].Value = value;
+                nodesDataGridView.Rows[e.NodeUpdated.GridY].Cells[e.NodeUpdated.GridX].Selected = true;
+            }
+            listDataGridView.Refresh();
+            Application.DoEvents();
         }
 
         private void WireUpandDowm()
@@ -406,9 +592,10 @@ namespace xModel_Gen
             DrawGrid();
         }
 
-        private static int GetDistance(double x1, double y1, double x2, double y2)
+        private void betterAutoWireToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            return (int) Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
-        }
+            BetterAutoWire();
+        }    
+
     }
 }

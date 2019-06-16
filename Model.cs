@@ -57,6 +57,20 @@ namespace xModel_Gen
             return null;
         }
 
+        public void DeleteNode(int x, int y)
+        {
+            Node test = FindNode(x, y);
+            _nodes.Remove(test);
+            _source.ResetBindings(false);
+        }
+
+        public void SetNodeNumber(int x, int y, int node)
+        {
+            Node test = FindNode(x, y);
+            test.NodeNumber = node;
+            _source.ResetBindings(false);
+        }
+
         public void SetNodeNumber(int i, int node)
         {
             if (i > _nodes.Count)

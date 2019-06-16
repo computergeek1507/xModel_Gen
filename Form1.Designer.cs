@@ -31,6 +31,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadDXFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadMattDXFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveXModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -39,6 +40,7 @@
             this.wireFromSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.leftToRightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.upAndDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.betterAutoWireToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dxfOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.xModelSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.nodesDataGridView = new System.Windows.Forms.DataGridView();
@@ -48,6 +50,11 @@
             this.XGrid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.YGrid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxIncrement = new System.Windows.Forms.CheckBox();
+            this.checkBoxActive = new System.Windows.Forms.CheckBox();
+            this.numericUpDownChannel = new System.Windows.Forms.NumericUpDown();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nodesDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listDataGridView)).BeginInit();
@@ -55,6 +62,7 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownChannel)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -72,6 +80,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadDXFToolStripMenuItem,
+            this.loadMattDXFToolStripMenuItem,
             this.toolStripSeparator1,
             this.saveXModelToolStripMenuItem,
             this.toolStripSeparator2,
@@ -83,31 +92,38 @@
             // loadDXFToolStripMenuItem
             // 
             this.loadDXFToolStripMenuItem.Name = "loadDXFToolStripMenuItem";
-            this.loadDXFToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.loadDXFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadDXFToolStripMenuItem.Text = "Load DXF...";
             this.loadDXFToolStripMenuItem.Click += new System.EventHandler(this.loadDXFToolStripMenuItem_Click);
+            // 
+            // loadMattDXFToolStripMenuItem
+            // 
+            this.loadMattDXFToolStripMenuItem.Name = "loadMattDXFToolStripMenuItem";
+            this.loadMattDXFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadMattDXFToolStripMenuItem.Text = "Load Block DXF...";
+            this.loadMattDXFToolStripMenuItem.Click += new System.EventHandler(this.LoadMattDXFToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(137, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // saveXModelToolStripMenuItem
             // 
             this.saveXModelToolStripMenuItem.Name = "saveXModelToolStripMenuItem";
-            this.saveXModelToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.saveXModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveXModelToolStripMenuItem.Text = "Save xModel";
             this.saveXModelToolStripMenuItem.Click += new System.EventHandler(this.saveXModelToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(137, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -116,7 +132,8 @@
             this.wiringToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.wireFromSelectedToolStripMenuItem,
             this.leftToRightToolStripMenuItem,
-            this.upAndDownToolStripMenuItem});
+            this.upAndDownToolStripMenuItem,
+            this.betterAutoWireToolStripMenuItem});
             this.wiringToolStripMenuItem.Name = "wiringToolStripMenuItem";
             this.wiringToolStripMenuItem.Size = new System.Drawing.Size(72, 20);
             this.wiringToolStripMenuItem.Text = "Auto Wire";
@@ -124,7 +141,7 @@
             // wireFromSelectedToolStripMenuItem
             // 
             this.wireFromSelectedToolStripMenuItem.Name = "wireFromSelectedToolStripMenuItem";
-            this.wireFromSelectedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.wireFromSelectedToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.wireFromSelectedToolStripMenuItem.Text = "Selected to Closest";
             this.wireFromSelectedToolStripMenuItem.ToolTipText = "Start at Selected then to Next Closest";
             this.wireFromSelectedToolStripMenuItem.Click += new System.EventHandler(this.wireFromSelectedToolStripMenuItem_Click);
@@ -132,7 +149,7 @@
             // leftToRightToolStripMenuItem
             // 
             this.leftToRightToolStripMenuItem.Name = "leftToRightToolStripMenuItem";
-            this.leftToRightToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.leftToRightToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.leftToRightToolStripMenuItem.Text = "Left to Right";
             this.leftToRightToolStripMenuItem.ToolTipText = "Wire Left To Right on the Whole Grid";
             this.leftToRightToolStripMenuItem.Click += new System.EventHandler(this.leftToRightToolStripMenuItem_Click);
@@ -140,10 +157,17 @@
             // upAndDownToolStripMenuItem
             // 
             this.upAndDownToolStripMenuItem.Name = "upAndDownToolStripMenuItem";
-            this.upAndDownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.upAndDownToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.upAndDownToolStripMenuItem.Text = "Up and Down";
             this.upAndDownToolStripMenuItem.ToolTipText = "Wire Up To Down on the Whole Grid";
             this.upAndDownToolStripMenuItem.Click += new System.EventHandler(this.upAndDownToolStripMenuItem_Click);
+            // 
+            // betterAutoWireToolStripMenuItem
+            // 
+            this.betterAutoWireToolStripMenuItem.Name = "betterAutoWireToolStripMenuItem";
+            this.betterAutoWireToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.betterAutoWireToolStripMenuItem.Text = "Better AutoWire";
+            this.betterAutoWireToolStripMenuItem.Click += new System.EventHandler(this.betterAutoWireToolStripMenuItem_Click);
             // 
             // dxfOpenFileDialog
             // 
@@ -162,8 +186,10 @@
             this.nodesDataGridView.AllowUserToDeleteRows = false;
             this.nodesDataGridView.AllowUserToResizeColumns = false;
             this.nodesDataGridView.AllowUserToResizeRows = false;
+            this.nodesDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.nodesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.nodesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.nodesDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.nodesDataGridView.Location = new System.Drawing.Point(0, 0);
             this.nodesDataGridView.MultiSelect = false;
@@ -174,8 +200,10 @@
             this.nodesDataGridView.ShowCellToolTips = false;
             this.nodesDataGridView.ShowEditingIcon = false;
             this.nodesDataGridView.ShowRowErrors = false;
-            this.nodesDataGridView.Size = new System.Drawing.Size(963, 537);
+            this.nodesDataGridView.Size = new System.Drawing.Size(951, 555);
             this.nodesDataGridView.TabIndex = 2;
+            this.nodesDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.NodesDataGridView_CellContentClick);
+            this.nodesDataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.NodesDataGridView_CellContentDoubleClick);
             // 
             // listDataGridView
             // 
@@ -198,7 +226,7 @@
             this.listDataGridView.ShowCellToolTips = false;
             this.listDataGridView.ShowEditingIcon = false;
             this.listDataGridView.ShowRowErrors = false;
-            this.listDataGridView.Size = new System.Drawing.Size(196, 537);
+            this.listDataGridView.Size = new System.Drawing.Size(196, 594);
             this.listDataGridView.TabIndex = 3;
             this.listDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.listDataGridView_CellContentClick);
             this.listDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.listDataGridView_CellContentClick);
@@ -260,17 +288,79 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.label2);
+            this.splitContainer1.Panel2.Controls.Add(this.label1);
+            this.splitContainer1.Panel2.Controls.Add(this.checkBoxIncrement);
+            this.splitContainer1.Panel2.Controls.Add(this.checkBoxActive);
+            this.splitContainer1.Panel2.Controls.Add(this.numericUpDownChannel);
             this.splitContainer1.Panel2.Controls.Add(this.nodesDataGridView);
-            this.splitContainer1.Size = new System.Drawing.Size(1169, 537);
+            this.splitContainer1.Size = new System.Drawing.Size(1169, 594);
             this.splitContainer1.SplitterDistance = 196;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 4;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(257, 568);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Channel";
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 567);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(82, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Auto Increment:";
+            // 
+            // checkBoxIncrement
+            // 
+            this.checkBoxIncrement.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxIncrement.AutoSize = true;
+            this.checkBoxIncrement.Checked = true;
+            this.checkBoxIncrement.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxIncrement.Location = new System.Drawing.Point(153, 567);
+            this.checkBoxIncrement.Name = "checkBoxIncrement";
+            this.checkBoxIncrement.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxIncrement.TabIndex = 5;
+            this.checkBoxIncrement.Text = "Auto Increment";
+            this.checkBoxIncrement.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxActive
+            // 
+            this.checkBoxActive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxActive.AutoSize = true;
+            this.checkBoxActive.Location = new System.Drawing.Point(91, 567);
+            this.checkBoxActive.Name = "checkBoxActive";
+            this.checkBoxActive.Size = new System.Drawing.Size(56, 17);
+            this.checkBoxActive.TabIndex = 4;
+            this.checkBoxActive.Text = "Active";
+            this.checkBoxActive.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDownChannel
+            // 
+            this.numericUpDownChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.numericUpDownChannel.Location = new System.Drawing.Point(309, 566);
+            this.numericUpDownChannel.Name = "numericUpDownChannel";
+            this.numericUpDownChannel.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownChannel.TabIndex = 3;
+            this.numericUpDownChannel.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1193, 576);
+            this.ClientSize = new System.Drawing.Size(1193, 633);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -283,8 +373,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.listDataGridView)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownChannel)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -312,6 +404,13 @@
         private System.Windows.Forms.ToolStripMenuItem wireFromSelectedToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem betterAutoWireToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox checkBoxIncrement;
+        private System.Windows.Forms.CheckBox checkBoxActive;
+        private System.Windows.Forms.NumericUpDown numericUpDownChannel;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolStripMenuItem loadMattDXFToolStripMenuItem;
     }
 }
 
