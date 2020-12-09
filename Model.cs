@@ -1,11 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 
 namespace xModel_Gen
 {
     public class Model
     {
-        private readonly List<Node> _nodes = new List<Node>();
+        public static object DeepClone(object obj)
+        {
+            object objResult = null;
+
+            using (var ms = new MemoryStream())
+            {
+                var bf = new BinaryFormatter();
+                bf.Serialize(ms, obj);
+
+                ms.Position = 0;
+                objResult = bf.Deserialize(ms);
+            }
+
+            return objResult;
+        }
+
+
+        private List<Node> _nodes = new List<Node>();
         private readonly BindingSource _source = new BindingSource();
 
         public Model()
@@ -35,6 +54,13 @@ namespace xModel_Gen
         public List<Node> GetNodes()
         {
             return _nodes;
+        }
+
+        public void SetNodes(List<Node> nodes)
+        {
+            _nodes = nodes;
+            _source.DataSource = _nodes;
+            _source.ResetBindings(false);
         }
 
         public int GetNodeCount()

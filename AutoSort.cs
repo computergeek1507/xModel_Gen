@@ -16,10 +16,21 @@ namespace xModel_Gen
 
         private readonly Model _model;
 
-        public AutoSort(Model model)
+        bool _worked = false;
+
+        List<Node> _doneNodes = new List<Node>();
+
+        int _wireGap = 5;
+
+        public AutoSort(Model model, int wireGap)
         {
             _model = model;
+            _wireGap = wireGap;
         }
+
+        public bool GetWorked() { return _worked; }
+
+        public List<Node> GetNodes() { return _doneNodes; }
 
         void OnListSizeSent(int size) => ListSizeSent.Invoke(this, size);
         void OnProgressSent(ProgressEventArgs progress) => ProgressSent.Invoke(this, progress);
@@ -41,16 +52,19 @@ namespace xModel_Gen
             {
                 //find nodes within 6 inches
                 Node first = _model.GetNode(i);
-                OnProgressSent(first.ToString(), i);
+                //OnProgressSent(first.ToString(), i);
                 first.Id = i;
-                for (int j = i + 1; j < _model.GetNodeCount(); j++)
+                for (int j = 0; j < _model.GetNodeCount(); j++)
                 {
                     Node second = _model.GetNode(j);
+                    if (first.GridX == second.GridX && first.GridY == second.GridY)
+                        continue;
+
                     int dist = ModelUtils.GetDistance(first, second);
-                    if (dist < 9)
+                    if (dist <= _wireGap)
                     {
                         first.CloseIds.Add(j);
-                        second.CloseIds.Add(i);
+                        //second.CloseIds.Add(i);
                     }
                 }
             }
@@ -63,77 +77,57 @@ namespace xModel_Gen
                 return false;
             }
 
-            //start.NodeNumber = count;
-            //count++;
+            start.NodeNumber = count;
+            count++;
 
-            return WireNodes(start, count);
+            return WireNodes(start, count, _model.GetNodes());
 
             return true;
         }
 
-        private bool WireNodes(Node start, int count)
+        private bool WireNodes(Node start, int count, List<Node> nodes)
         {
-            OnProgressSent(_model.ToString(), _model.GetNodeCount() + count, start);
-            Node newnode = GetNextNode(start);
-
-            if (newnode != null)
+            if ((_model.GetNodeCount() + 1) == count )
             {
-                start.NodeNumber = count;
-                return WireNodes(newnode, count + 1);
-            }
-
-            if (_model.GetNodeCount() == count)
-            {
-                start.NodeNumber = count;
+                //start.NodeNumber = count;
+                _doneNodes = (List<Node>)Model.DeepClone(nodes);
+                _worked = true;
                 return true;
             }
+            //if ((_model.GetNodeCount()) == count)
+            //{
+            //    //start.NodeNumber = count;
+            //    _doneNodes = (List<Node>)Model.DeepClone(nodes);
+            //    return true;
+            //}
 
-            if ((_model.GetNodeCount() + 1) == count)
+            bool returnValue = false;
+
+            for (int i = 0; i < start.CloseIds.Count(); ++i)
             {
-                start.NodeNumber = count;
-                return true;
+                if (nodes[start.CloseIds[i]].IsWired)
+                    continue;
+                List<Node> newNodes = (List<Node>)Model.DeepClone(nodes);
+
+                Node node = (Node)Model.DeepClone(newNodes[start.CloseIds[i]]);
+                newNodes[start.CloseIds[i]].NodeNumber = count;
+                int newcount = count;
+                newcount++;
+                returnValue =! WireNodes(node, newcount, newNodes);
             }
+            //OnProgressSent(_model.ToString(), _model.GetNodeCount() + count, start);
 
-            newnode = GetPrevousNode(start);
-            //count--;
-            //if (start.CloseIds.Count == 0)
-             //   return false;
-            //start.CloseIds.RemoveAt(0);
-            //start.NodeNumber = 0;
+            //if (_model.GetNodeCount() == count)
+            //{
+                //start.NodeNumber = count;
+               // _doneNodes = (List<Node>)Model.DeepClone(nodes);
+               // return true;
+            //}
 
-            if (newnode != null)
-            {
-                return WireNodes(newnode, count - 1);
-            }
 
-            return false;
+
+            return returnValue;
         }
 
-        private Node GetNextNode(Node current)
-        {
-            Node newNode;
-            do
-            {
-                int next = current.GetNextId();
-                if (next == -1)
-                {
-                    return null;
-                }
-                newNode = _model.GetNode(next);
-            } while (newNode.IsWired);
-            newNode.PrevId = current.Id;
-            return newNode;
-        }
-        private Node GetPrevousNode(Node current)
-        {
-            if (current.PrevId==-1)
-            {
-                return null;
-            }
-
-            int prev = current.GetPrevId();
-            Node newNode = _model.GetNode(prev);
-            return newNode;
-        }
     }
 }

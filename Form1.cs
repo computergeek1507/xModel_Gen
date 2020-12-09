@@ -35,6 +35,7 @@ namespace xModel_Gen
             if (dxfOpenFileDialog.ShowDialog() == DialogResult.OK)
                 try
                 {
+                    ClearGrid();
                     _model.GetNodes().Clear();
                     //Get the path of specified file
                     _doc = DxfDocument.Load(dxfOpenFileDialog.FileName);
@@ -48,27 +49,6 @@ namespace xModel_Gen
                     var fileName = new FileInfo(dxfOpenFileDialog.FileName);
                     Text = "xModel Gen \"" + fileName.Name + "\"";
                     DrawDxf(_doc);
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine(exception);
-                    MessageBox.Show(exception.Message, "Error");
-                }
-        }
-
-        private void LoadMattDXFToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (dxfOpenFileDialog.ShowDialog() == DialogResult.OK)
-                try
-                {
-                    _model.GetNodes().Clear();
-                    //Get the path of specified file
-
-                    var fileName = new FileInfo(dxfOpenFileDialog.FileName);
-                    Text = "xModel Gen \"" + fileName.Name + "\"";
-
-                    ReadMattJohnsonFile(dxfOpenFileDialog.FileName, Path.GetFileNameWithoutExtension(fileName.Name));
-
                 }
                 catch (Exception exception)
                 {
@@ -284,80 +264,10 @@ namespace xModel_Gen
             DrawGrid();
         }
 
-        private void ReadMattJohnsonFile(string filesPath, string fname)
+        private void ClearGrid()
         {
-            _model.Name = fname;
-            var minX = 10000000;
-            var minY = 10000000;
-            var maxX = 0;
-            var maxY = 0;
-
-            string line;
-
-            // Read the file and display it line by line.  
-            StreamReader file = new StreamReader(filesPath);
-            while ((line = file.ReadLine()) != null)
-            {
-                //System.Console.WriteLine(line);
-                if (line.StartsWith("AcDbBlockReference"))
-                {
-                    file.ReadLine();
-                    string name = file.ReadLine();
-                    if (!name.StartsWith("*U"))
-                    {
-                        continue;
-                    }
-                    file.ReadLine();
-                    string strX = file.ReadLine();
-                    file.ReadLine();
-                    string strY = file.ReadLine();
-                    double centX = double.Parse(strX);
-                    double centY = double.Parse(strY);
-
-                    var newX = (int)(centX);
-                    var newY = (int)(centY);
-
-                    if (newX < minX)
-                        minX = newX - 1;
-                    if (newY < minY)
-                        minY = newY - 1;
-
-                    if (newX > maxX)
-                        maxX = newX + 1;
-                    if (newY > maxY)
-                        maxY = newY + 1;
-
-                    var newNode = new Node
-                    {
-                        GridX = newX,
-                        GridY = newY
-                    };
-                    _model.AddNode(newNode);
-                }
-            }
-
-            file.Close();
-
-            var width = maxX - minX;
-            var heigth = maxY - minY;
-
-            _model.SizeX = width;
-            _model.SizeY = heigth;
-
-            foreach (var node in _model.GetNodes())
-            {
-                //var scaleX = _model.SizeX / 2 + node.GridX;
-                //var scaleY = _model.SizeY / 2 + node.GridY;
-                var scaleX = node.GridX - minX;
-                var scaleY = node.GridY - minY;
-                Debug.WriteLine(scaleX);
-                Debug.WriteLine(scaleY);
-                node.GridX = scaleX;
-                node.GridY = scaleY;
-            }
-
-            listDataGridView.DataSource = _model.GetBinding();
-            DrawGrid();
+            nodesDataGridView.Rows.Clear();
+            nodesDataGridView.Refresh();
         }
 
         private void DrawGrid()
@@ -498,11 +408,11 @@ namespace xModel_Gen
             DrawGrid();
         }
 
-        private void BetterAutoWire()
+        private void BetterAutoWire(int wireGap)
         {
             _progess = new ProgressDialog();
             _progess.Show();
-            AutoSort sort = new AutoSort(_model);
+            AutoSort sort = new AutoSort(_model, wireGap);
             sort.ListSizeSent += ProgressSizeUpdated;
             sort.ProgressSent += ProgressUpdated;
 
@@ -511,13 +421,19 @@ namespace xModel_Gen
             var x = nodesDataGridView.CurrentCell.ColumnIndex;
             var y = nodesDataGridView.CurrentCell.RowIndex;
 
-            bool worked = sort.WireModel(x, y);
-
+            sort.WireModel(x, y);
+            bool worked = sort.GetWorked();
             _progess.Close();
 
-            _model.SortNodes();
+            if (worked)
+            {
+                _model.SetNodes(sort.GetNodes());
+                _model.SortNodes();
+
+            }
             listDataGridView.Refresh();
             DrawGrid();
+
             MessageBox.Show(worked ? "Worked!" : "Didn't Work:(");
         }
 
@@ -594,7 +510,8 @@ namespace xModel_Gen
 
         private void betterAutoWireToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            BetterAutoWire();
+            int gap = (int)numericUpDownGap.Value;
+            BetterAutoWire(gap);
         }    
 
     }
