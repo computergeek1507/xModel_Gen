@@ -57,24 +57,9 @@ namespace xModel_Gen
                 }
         }
 
-        private void wireFromSelectedToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AutoWire();
-        }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void upAndDownToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WireUpandDowm();
-        }
-
-        private void leftToRightToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WireLeftToRight();
         }
 
         private void saveXModelToolStripMenuItem_Click(object sender, EventArgs e)
@@ -119,25 +104,7 @@ namespace xModel_Gen
 
         private void NodesDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            var x = nodesDataGridView.CurrentCell.ColumnIndex;
-            var y = nodesDataGridView.CurrentCell.RowIndex;
-            if (Control.ModifierKeys == Keys.Shift)
-            {
-                _model.DeleteNode(x, y);
-                nodesDataGridView[x, y].Value = string.Empty;
-            }
-            else
-            {
-                if (checkBoxActive.Checked)
-                {
-                    _model.SetNodeNumber(x, y, decimal.ToInt32(numericUpDownChannel.Value));
-                    DrawGrid();
-                    if (checkBoxIncrement.Checked)
-                    {
-                        numericUpDownChannel.Value = numericUpDownChannel.Value + 1;
-                    }
-                }
-            }
+
         }
 
         private void NodesDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -241,24 +208,7 @@ namespace xModel_Gen
                 };
                 _model.AddNode(newNode);
             }
-
-            var width = maxX - minX;
-            var heigth = maxY - minY;
-
-            _model.SizeX = width;
-            _model.SizeY = heigth;
-
-            foreach (var node in _model.GetNodes())
-            {
-                //var scaleX = _model.SizeX / 2 + node.GridX;
-                //var scaleY = _model.SizeY / 2 + node.GridY;
-                var scaleX =  node.GridX - minX;
-                var scaleY =  node.GridY - minY;
-                Debug.WriteLine(scaleX);
-                Debug.WriteLine(scaleY);
-                node.GridX = scaleX;
-                node.GridY = scaleY;
-            }
+            _model.SetBoundingBox(minX, maxX, minY, maxY);
 
             listDataGridView.DataSource = _model.GetBinding();
             DrawGrid();
@@ -285,8 +235,7 @@ namespace xModel_Gen
                 var value = "X";
                 if (node.IsWired)
                     value = node.NodeNumber.ToString();
-                Debug.WriteLine(node.GridX);
-                Debug.WriteLine(node.GridY);
+
                 nodesDataGridView[node.GridX, node.GridY].Value = value;
             }
         }
@@ -294,118 +243,9 @@ namespace xModel_Gen
         private void GenerateCustomModel()
         {
             xModelSaveFileDialog.FileName = _model.Name;
-            if (xModelSaveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                var cm = "";
-
-                var filename = xModelSaveFileDialog.FileName;
-                for (var i = 0; i < nodesDataGridView.RowCount; i++)
-                {
-                    for (var j = 0; j < nodesDataGridView.ColumnCount; j++)
-                    {
-                        var cell = "";
-                        if (nodesDataGridView[j, i].Value != null)
-                        {
-                            cell = nodesDataGridView[j, i].Value.ToString();
-                            if (cell == "X")
-                                cell = "1";
-                        }
-
-                        cm += cell + ",";
-                    }
-
-                    cm += ";";
-                }
-
-                cm = cm.TrimEnd(';');
-
-                using (var f = new StreamWriter(filename))
-                {
-                    f.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<custommodel \n");
-                    f.Write("name=\"{0}\" ", _model.Name);
-                    f.Write("parm1=\"{0}\" ", _model.SizeX);
-                    f.Write("parm2=\"{0}\" ", _model.SizeY);
-                    f.Write("StringType=\"RGB Nodes\" ");
-                    f.Write("Transparency=\"0\" ");
-                    f.Write("PixelSize=\"2\" ");
-                    f.Write("ModelBrightness=\"\" ");
-                    f.Write("Antialias=\"1\" ");
-                    f.Write("StrandNames=\"\" ");
-                    f.Write("NodeNames=\"\" ");
-
-                    f.Write("CustomModel=\"");
-                    f.Write(cm);
-                    f.Write("\" ");
-                    f.Write("SourceVersion=\"2019.13\" ");
-                    f.Write(" >\n");
-
-                    f.Write("</custommodel>");
-                    f.Close();
-                }
+            if (xModelSaveFileDialog.ShowDialog() == DialogResult.OK) {
+                _model.ExportModel(xModelSaveFileDialog.FileName);
             }
-        }
-
-        private void AutoWire()
-        {
-            //clear old wiring
-            _model.ClearWiring();
-
-            var x = nodesDataGridView.CurrentCell.ColumnIndex;
-            var y = nodesDataGridView.CurrentCell.RowIndex;
-
-            var num = 1;
-            //find first cell
-            var found = _model.FindNode(x, y);
-
-            if (found == null)
-            {
-                MessageBox.Show("Starting Node Not Found", "Starting Node Not Found");
-                return;
-            }
-
-            found.NodeNumber = 1;
-
-            var i = 0;
-            while (num < _model.GetNodeCount())
-            {
-                i++;
-                var distance = 10000;
-                Node foundnode = null;
-                foreach (var node in _model.GetNodes())
-                {
-                    if (node.IsWired)
-                        continue;
-                    var newdist = ModelUtils.GetDistance(x, y, node.GridX, node.GridY);
-                    if (newdist < distance)
-                    {
-                        distance = newdist;
-                        foundnode = node;
-                    }
-                }
-
-                if (foundnode != null)
-                {
-                    num++;
-                    foundnode.NodeNumber = num;
-                    x = foundnode.GridX;
-                    y = foundnode.GridY;
-                }
-                else
-                {
-                    MessageBox.Show("Node is Null", "Node is Null");
-                    break;
-                }
-
-                if (i > 10000000)
-                {
-                    MessageBox.Show("Loop error", "Loop error");
-                    break;
-                }
-            }
-
-            _model.SortNodes();
-            listDataGridView.Refresh();
-            DrawGrid();
         }
 
         private void BetterAutoWire(int wireGap)
@@ -418,6 +258,7 @@ namespace xModel_Gen
 
             _model.ClearWiring();
 
+            //get starting position
             var x = nodesDataGridView.CurrentCell.ColumnIndex;
             var y = nodesDataGridView.CurrentCell.RowIndex;
 
@@ -427,7 +268,12 @@ namespace xModel_Gen
 
             if (worked)
             {
-                _model.SetNodes(sort.GetNodes());
+                int order = 1;
+                foreach (int index in sort.GetIndexes())
+                {
+                    _model.GetNode(index).NodeNumber = order;
+                    order++;
+                }
                 _model.SortNodes();
 
             }
@@ -451,61 +297,12 @@ namespace xModel_Gen
                 var value = "X";
                 if (e.NodeUpdated.IsWired)
                     value = e.NodeUpdated.NodeNumber.ToString();
-                Debug.WriteLine(e.NodeUpdated.GridX);
-                Debug.WriteLine(e.NodeUpdated.GridY);
+
                 nodesDataGridView[e.NodeUpdated.GridX, e.NodeUpdated.GridY].Value = value;
                 nodesDataGridView.Rows[e.NodeUpdated.GridY].Cells[e.NodeUpdated.GridX].Selected = true;
             }
             listDataGridView.Refresh();
             Application.DoEvents();
-        }
-
-        private void WireUpandDowm()
-        {
-            //clear old wiring
-            _model.ClearWiring();
-            int nodeNum = 1;
-            for (int x = 0; x < nodesDataGridView.ColumnCount; x++ )
-            {
-                for (int y = 0; y < nodesDataGridView.RowCount; y++)
-                {
-                    var found = _model.FindNode(x, y);
-
-                    if (found != null)
-                    {
-                        found.NodeNumber = nodeNum;
-                        nodeNum++;
-                    }
-                }
-            }
-
-            _model.SortNodes();
-            listDataGridView.Refresh();
-            DrawGrid();
-        }
-
-        private void WireLeftToRight()
-        {
-            //clear old wiring
-            _model.ClearWiring();
-            int nodeNum = 1;
-            for (int y = 0; y < nodesDataGridView.RowCount; y++)
-            {
-                for (int x = 0; x < nodesDataGridView.ColumnCount; x++)
-                {
-                    var found = _model.FindNode(x, y);
-
-                    if (found != null)
-                    {
-                        found.NodeNumber = nodeNum;
-                        nodeNum++;
-                    }
-                }
-            }
-
-            _model.SortNodes();
-            listDataGridView.Refresh();
-            DrawGrid();
         }
 
         private void betterAutoWireToolStripMenuItem_Click(object sender, EventArgs e)

@@ -36,9 +36,6 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wiringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.wireFromSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.leftToRightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.upAndDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.betterAutoWireToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dxfOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.xModelSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -49,12 +46,7 @@
             this.XGrid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.YGrid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.checkBoxIncrement = new System.Windows.Forms.CheckBox();
-            this.checkBoxActive = new System.Windows.Forms.CheckBox();
-            this.numericUpDownChannel = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.numericUpDownGap = new System.Windows.Forms.NumericUpDown();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nodesDataGridView)).BeginInit();
@@ -63,9 +55,6 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownChannel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGap)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,74 +84,47 @@
             // loadDXFToolStripMenuItem
             // 
             this.loadDXFToolStripMenuItem.Name = "loadDXFToolStripMenuItem";
-            this.loadDXFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadDXFToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.loadDXFToolStripMenuItem.Text = "Load DXF...";
             this.loadDXFToolStripMenuItem.Click += new System.EventHandler(this.loadDXFToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
             // 
             // saveXModelToolStripMenuItem
             // 
             this.saveXModelToolStripMenuItem.Name = "saveXModelToolStripMenuItem";
-            this.saveXModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveXModelToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.saveXModelToolStripMenuItem.Text = "Save xModel";
             this.saveXModelToolStripMenuItem.Click += new System.EventHandler(this.saveXModelToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(138, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // wiringToolStripMenuItem
             // 
             this.wiringToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.wireFromSelectedToolStripMenuItem,
-            this.leftToRightToolStripMenuItem,
-            this.upAndDownToolStripMenuItem,
             this.betterAutoWireToolStripMenuItem});
             this.wiringToolStripMenuItem.Name = "wiringToolStripMenuItem";
             this.wiringToolStripMenuItem.Size = new System.Drawing.Size(72, 20);
             this.wiringToolStripMenuItem.Text = "Auto Wire";
             // 
-            // wireFromSelectedToolStripMenuItem
-            // 
-            this.wireFromSelectedToolStripMenuItem.Name = "wireFromSelectedToolStripMenuItem";
-            this.wireFromSelectedToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.wireFromSelectedToolStripMenuItem.Text = "Selected to Closest";
-            this.wireFromSelectedToolStripMenuItem.ToolTipText = "Start at Selected then to Next Closest";
-            this.wireFromSelectedToolStripMenuItem.Click += new System.EventHandler(this.wireFromSelectedToolStripMenuItem_Click);
-            // 
-            // leftToRightToolStripMenuItem
-            // 
-            this.leftToRightToolStripMenuItem.Name = "leftToRightToolStripMenuItem";
-            this.leftToRightToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.leftToRightToolStripMenuItem.Text = "Left to Right";
-            this.leftToRightToolStripMenuItem.ToolTipText = "Wire Left To Right on the Whole Grid";
-            this.leftToRightToolStripMenuItem.Click += new System.EventHandler(this.leftToRightToolStripMenuItem_Click);
-            // 
-            // upAndDownToolStripMenuItem
-            // 
-            this.upAndDownToolStripMenuItem.Name = "upAndDownToolStripMenuItem";
-            this.upAndDownToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.upAndDownToolStripMenuItem.Text = "Up and Down";
-            this.upAndDownToolStripMenuItem.ToolTipText = "Wire Up To Down on the Whole Grid";
-            this.upAndDownToolStripMenuItem.Click += new System.EventHandler(this.upAndDownToolStripMenuItem_Click);
-            // 
             // betterAutoWireToolStripMenuItem
             // 
             this.betterAutoWireToolStripMenuItem.Name = "betterAutoWireToolStripMenuItem";
-            this.betterAutoWireToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.betterAutoWireToolStripMenuItem.Text = "Better AutoWire";
+            this.betterAutoWireToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.betterAutoWireToolStripMenuItem.Text = "Run AutoWire";
             this.betterAutoWireToolStripMenuItem.Click += new System.EventHandler(this.betterAutoWireToolStripMenuItem_Click);
             // 
             // dxfOpenFileDialog
@@ -196,7 +158,7 @@
             this.nodesDataGridView.ShowCellToolTips = false;
             this.nodesDataGridView.ShowEditingIcon = false;
             this.nodesDataGridView.ShowRowErrors = false;
-            this.nodesDataGridView.Size = new System.Drawing.Size(945, 536);
+            this.nodesDataGridView.Size = new System.Drawing.Size(927, 560);
             this.nodesDataGridView.TabIndex = 2;
             this.nodesDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.NodesDataGridView_CellContentClick);
             this.nodesDataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.NodesDataGridView_CellContentDoubleClick);
@@ -284,89 +246,31 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.groupBox2);
-            this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.label1);
+            this.splitContainer1.Panel2.Controls.Add(this.numericUpDownGap);
             this.splitContainer1.Panel2.Controls.Add(this.nodesDataGridView);
             this.splitContainer1.Size = new System.Drawing.Size(1169, 594);
             this.splitContainer1.SplitterDistance = 196;
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 4;
             // 
-            // groupBox1
+            // label1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.checkBoxIncrement);
-            this.groupBox1.Controls.Add(this.checkBoxActive);
-            this.groupBox1.Controls.Add(this.numericUpDownChannel);
-            this.groupBox1.Location = new System.Drawing.Point(119, 542);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(347, 49);
-            this.groupBox1.TabIndex = 8;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Auto Increment";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox2.Controls.Add(this.numericUpDownGap);
-            this.groupBox2.Location = new System.Drawing.Point(3, 542);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(99, 49);
-            this.groupBox2.TabIndex = 9;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Light Spacing";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(147, 18);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 13);
-            this.label2.TabIndex = 12;
-            this.label2.Text = "Node Count";
-            // 
-            // checkBoxIncrement
-            // 
-            this.checkBoxIncrement.AutoSize = true;
-            this.checkBoxIncrement.Checked = true;
-            this.checkBoxIncrement.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxIncrement.Location = new System.Drawing.Point(68, 17);
-            this.checkBoxIncrement.Name = "checkBoxIncrement";
-            this.checkBoxIncrement.Size = new System.Drawing.Size(73, 17);
-            this.checkBoxIncrement.TabIndex = 10;
-            this.checkBoxIncrement.Text = "Increment";
-            this.checkBoxIncrement.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxActive
-            // 
-            this.checkBoxActive.AutoSize = true;
-            this.checkBoxActive.Location = new System.Drawing.Point(6, 17);
-            this.checkBoxActive.Name = "checkBoxActive";
-            this.checkBoxActive.Size = new System.Drawing.Size(56, 17);
-            this.checkBoxActive.TabIndex = 9;
-            this.checkBoxActive.Text = "Active";
-            this.checkBoxActive.UseVisualStyleBackColor = true;
-            // 
-            // numericUpDownChannel
-            // 
-            this.numericUpDownChannel.Location = new System.Drawing.Point(217, 17);
-            this.numericUpDownChannel.Name = "numericUpDownChannel";
-            this.numericUpDownChannel.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownChannel.TabIndex = 8;
-            this.numericUpDownChannel.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 568);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 13);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Light Spacing:";
             // 
             // numericUpDownGap
             // 
-            this.numericUpDownGap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.numericUpDownGap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownGap.Location = new System.Drawing.Point(6, 16);
+            this.numericUpDownGap.Location = new System.Drawing.Point(90, 566);
             this.numericUpDownGap.Name = "numericUpDownGap";
-            this.numericUpDownGap.Size = new System.Drawing.Size(87, 20);
+            this.numericUpDownGap.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownGap.TabIndex = 13;
             this.numericUpDownGap.Value = new decimal(new int[] {
             5,
@@ -391,12 +295,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.listDataGridView)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownChannel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGap)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -411,8 +312,6 @@
         private System.Windows.Forms.ToolStripMenuItem saveXModelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem wiringToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem leftToRightToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem upAndDownToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog dxfOpenFileDialog;
         private System.Windows.Forms.SaveFileDialog xModelSaveFileDialog;
         private System.Windows.Forms.DataGridView nodesDataGridView;
@@ -422,17 +321,11 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn Wired;
         private System.Windows.Forms.DataGridViewTextBoxColumn XGrid;
         private System.Windows.Forms.DataGridViewTextBoxColumn YGrid;
-        private System.Windows.Forms.ToolStripMenuItem wireFromSelectedToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem betterAutoWireToolStripMenuItem;
-        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.NumericUpDown numericUpDownGap;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox checkBoxIncrement;
-        private System.Windows.Forms.CheckBox checkBoxActive;
-        private System.Windows.Forms.NumericUpDown numericUpDownChannel;
+        private System.Windows.Forms.Label label1;
     }
 }
 
