@@ -196,7 +196,7 @@ namespace xModel_Gen.Tests
         }
 
         [Test]
-        public void Model_CleaarWiring()
+        public void Model_ClearWiring()
         {
             Model test = new Model();
 

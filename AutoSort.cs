@@ -22,8 +22,6 @@ namespace xModel_Gen
 
         int _wireGap = 5;
 
-        int __temp = 0;
-
         public AutoSort(Model model, int wireGap)
         {
             _model = model;
@@ -35,6 +33,7 @@ namespace xModel_Gen
         public List<int> GetIndexes() { return _doneIndexs; }
 
         void OnListSizeSent(int size) => ListSizeSent.Invoke(this, size);
+
         void OnProgressSent(ProgressEventArgs progress) => ProgressSent.Invoke(this, progress);
 
         void OnProgressSent(string message, int progress, Node node = null)

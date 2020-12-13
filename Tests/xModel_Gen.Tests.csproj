@@ -45,10 +45,10 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoSort_Test.cs" />
     <Compile Include="ModelUtils_Test.cs" />
     <Compile Include="Model_Test.cs" />
     <Compile Include="Node_Test.cs" />
-    <Compile Include="TestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
